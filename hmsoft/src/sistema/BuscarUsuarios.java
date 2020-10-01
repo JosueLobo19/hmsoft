@@ -1,0 +1,969 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package sistema;
+
+import Clases.clsConnection;
+import Clases.clsFunciones;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author admin
+ */
+public class BuscarUsuarios extends javax.swing.JInternalFrame {
+    clsFunciones  oFunc = new clsFunciones();
+    clsConnection oConn = new clsConnection();
+            javax.swing.ImageIcon oIconoSi = new javax.swing.ImageIcon(ClassLoader.getSystemResource("imagenes/chek.gif"));
+        javax.swing.ImageIcon oIconoNo = new javax.swing.ImageIcon(ClassLoader.getSystemResource("imagenes/xx.png"));
+        javax.swing.ImageIcon oNo = null;
+    DefaultTableModel model;
+    public BuscarUsuarios() {
+        initComponents();
+        Fecha();
+        sbCargarUsuarios("");
+        
+    }
+        private void vExamenes(String Nro){
+      
+        vSql(txtTriaje,lblTriaje, "triaje", Nro);
+        vSql(txtLabClinico,lblLabClinico, "lab_clinico", Nro);
+        vSql(txtElectrocardiograma,lblElectrocardiograma, "informe_electrocardiograma", Nro);
+        vSql(txtRadiografiaTorax,lblRadiografiaTorax, "radiografia_torax", Nro);
+        vSql(txtExRxSanguineos,lblExRxSanguineos, "ex_radiograficos_sanguineos", Nro);
+        vSql(txtFichaAudiologica,lblFichaAudiologica, "ficha_audiologica", Nro);        
+        vSql(txtEspirometria,lblEspirometria, "funcion_abs", Nro);
+        vSql(txtOdontograma,lblOdontograma, "odontograma", Nro);
+        vSql(txtPsicologia,lblPsicologia, "informe_psicologico", Nro);
+        vSql(txtAnexo7D,lblAnexo7D, "anexo7d", Nro);
+        vSql(txtHistoriaOcupacional,lblHistorialOcupacional, "historia_oc_info", Nro);        
+        vSql(txtAntPatologicos,lblFichaAPatologicos, "antecedentes_patologicos", Nro);
+        vSql(txtCuestionarioNordico,lblCuestionarioNordico, "cuestionario_nordico", Nro);
+        vSql(txtCerTrabajo,lblCertificacionAltura, "certificacion_medica_altura", Nro);
+        vSql(txtDetencionSAS,lblSAS, "ficha_sas", Nro);
+        vSql(txtConsentimientoDosaje,lblConsentimientoDosaje, "consentimiento_dosaje", Nro);
+        vSql(txtPerimetroToraxico,lblPerimetroToraxico, "perimetro_toracico", Nro);
+        vSql(txtOftalmologia,lblOftalmologia, "oftalmologia", Nro); 
+      
+    }
+    private boolean vSql(JTextField txt,JLabel lbl ,String sTabla, String sOpcion)
+    {
+        String sStmt;
+        boolean bResult=false;
+        sStmt = " Select * from "+sTabla;
+        sStmt+= " Where n_orden='"+sOpcion+"'";        
+        oConn.FnBoolQueryExecute(sStmt);
+        try 
+        {
+            if (oConn.setResult.next()){        
+               bResult=true;
+            lbl.setIcon(oIconoSi);
+            txt.setText("PASADO");
+            txt.setForeground(new java.awt.Color(51, 153, 0));
+            }else{
+               lbl.setIcon(oIconoNo);
+                txt.setText("POR PASAR");
+                txt.setForeground(new java.awt.Color(204, 0, 0));
+            }  
+            oConn.setResult.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Ocupacional.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        return bResult;        
+    }
+    private void Limpiar2(){
+    txtEOrden.setText(null);
+    txtENombre.setText(null);
+    txtEtipoExamen.setText(null);
+    ///
+    txtTriaje.setText(null);
+    txtLabClinico.setText(null);
+    txtElectrocardiograma.setText(null);
+    txtRadiografiaTorax.setText(null);
+    txtFichaAudiologica.setText(null);
+    txtEspirometria.setText(null);
+    txtOdontograma.setText(null);
+    txtPsicologia.setText(null);
+    txtAnexo7D.setText(null);
+    txtHistoriaOcupacional.setText(null);
+    txtAntPatologicos.setText(null);
+    txtCuestionarioNordico.setText(null);
+    txtCerTrabajo.setText(null);
+    txtDetencionSAS.setText(null);
+    txtConsentimientoDosaje.setText(null);
+    lblSAS.setText(null);
+    ///
+    lblTriaje.setIcon(oNo);
+    lblLabClinico.setIcon(oNo);
+    lblElectrocardiograma.setIcon(oNo);
+    lblRadiografiaTorax.setIcon(oNo);
+    lblFichaAudiologica.setIcon(oNo);
+    lblEspirometria.setIcon(oNo);
+    lblOdontograma.setIcon(oNo);
+    lblPsicologia.setIcon(oNo);
+    lblAnexo7D.setIcon(oNo);
+    lblHistorialOcupacional.setIcon(oNo);
+    lblFichaAPatologicos.setIcon(oNo);
+    lblCuestionarioNordico.setIcon(oNo);
+    lblCertificacionAltura.setIcon(oNo);
+    lblConsentimientoDosaje.setIcon(oNo);
+    lblSAS.setIcon(oNo);
+    //
+    txtEOrden.setEditable(true);
+   // txtENombre.setEditable(true);
+   // txtEtipoExamen.setEditable(true);
+        txtEOrden.requestFocus();
+    }    
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+      private  void sbCargarUsuarios(String valor){
+        
+          String [] titulos={"N°Orden","Nombres","Fecha"};
+          String [] registros = new String[3];
+          model = new DefaultTableModel(null,titulos){        
+              @Override
+              public boolean isCellEditable(int rowIndex, int columnIndex) {
+              return false;
+             }};
+          SimpleDateFormat f = new SimpleDateFormat("yyyy/MM/dd");
+        
+          String Sql="select d.nombres_pa||''||d.apellidos_pa AS nombres, n.fecha_apertura_po,n.n_orden "
+                  + "FROM datos_paciente AS d "
+                  + "INNER JOIN n_orden_ocupacional AS n ON (d.cod_pa = n.cod_pa) where CONCAT(nombres_pa,' ',apellidos_pa) LIKE '%"+valor+"%'"
+                  + " and estado_ex ='PROCESO' and n.fecha_apertura_po between '"+ FechaDesde.getDate().toString()+"' and '"+ FechaHasta.getDate().toString()+"' order by n.n_orden desc"; 
+                    
+         SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+    if (oConn.FnBoolQueryExecute(Sql))
+        {
+             try  {
+                
+                while (oConn.setResult.next())
+                {
+                                     
+                    registros[0]= oConn.setResult.getString("n_orden");
+                    registros[1]= oConn.setResult.getString("nombres");
+                    registros[2]= formato.format(oConn.setResult.getDate("fecha_apertura_po"));
+                     model.addRow(registros);
+                }
+                 
+                  // Coloca el Modelo de Nueva Cuenta
+                  tbClientes.setModel(model);
+                tabla();
+             
+                 // Cierra Resultados
+                 oConn.setResult.close();
+            } 
+            catch (SQLException ex) 
+            {
+                //JOptionPane.showMessageDialorootPane,ex);
+                oFunc.SubSistemaMensajeError(ex.toString());
+                Logger.getLogger(BuscarUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }    
+         
+}
+void tabla(){
+          tbClientes.setFont(new java.awt.Font("Tahoma", 0, 11)); 
+          tbClientes.setModel(model);          
+          tbClientes.getColumnModel().getColumn(0).setPreferredWidth(120);
+          tbClientes.getColumnModel().getColumn(1).setPreferredWidth(400);
+          tbClientes.getColumnModel().getColumn(2).setPreferredWidth(200);
+          tbClientes.getTableHeader().setReorderingAllowed(false);
+
+}
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jLabel1 = new javax.swing.JLabel();
+        FechaDesde = new com.toedter.calendar.JDateChooser();
+        FechaHasta = new com.toedter.calendar.JDateChooser();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        txtNombre = new javax.swing.JTextField();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbClientes = new javax.swing.JTable();
+        jSeparator1 = new javax.swing.JSeparator();
+        jTabbedPane2 = new javax.swing.JTabbedPane();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel124 = new javax.swing.JLabel();
+        txtTriaje = new javax.swing.JTextField();
+        jLabel126 = new javax.swing.JLabel();
+        txtLabClinico = new javax.swing.JTextField();
+        jLabel128 = new javax.swing.JLabel();
+        txtElectrocardiograma = new javax.swing.JTextField();
+        jLabel130 = new javax.swing.JLabel();
+        txtRadiografiaTorax = new javax.swing.JTextField();
+        jLabel132 = new javax.swing.JLabel();
+        txtFichaAudiologica = new javax.swing.JTextField();
+        jLabel134 = new javax.swing.JLabel();
+        txtEspirometria = new javax.swing.JTextField();
+        jLabel137 = new javax.swing.JLabel();
+        txtOdontograma = new javax.swing.JTextField();
+        txtPsicologia = new javax.swing.JTextField();
+        jLabel138 = new javax.swing.JLabel();
+        txtAnexo7D = new javax.swing.JTextField();
+        jLabel141 = new javax.swing.JLabel();
+        txtHistoriaOcupacional = new javax.swing.JTextField();
+        jLabel143 = new javax.swing.JLabel();
+        jLabel144 = new javax.swing.JLabel();
+        txtCerTrabajo = new javax.swing.JTextField();
+        txtCuestionarioNordico = new javax.swing.JTextField();
+        jLabel145 = new javax.swing.JLabel();
+        jLabel146 = new javax.swing.JLabel();
+        txtDetencionSAS = new javax.swing.JTextField();
+        txtConsentimientoDosaje = new javax.swing.JTextField();
+        jLabel150 = new javax.swing.JLabel();
+        jLabel151 = new javax.swing.JLabel();
+        txtAntPatologicos = new javax.swing.JTextField();
+        jLabel154 = new javax.swing.JLabel();
+        txtEOrden = new javax.swing.JTextField();
+        jLabel155 = new javax.swing.JLabel();
+        txtENombre = new javax.swing.JTextField();
+        jLabel156 = new javax.swing.JLabel();
+        txtEtipoExamen = new javax.swing.JTextField();
+        jSeparator18 = new javax.swing.JSeparator();
+        lblConsentimientoDosaje = new javax.swing.JLabel();
+        lblSAS = new javax.swing.JLabel();
+        lblCertificacionAltura = new javax.swing.JLabel();
+        lblCuestionarioNordico = new javax.swing.JLabel();
+        lblFichaAPatologicos = new javax.swing.JLabel();
+        lblRadiografiaTorax = new javax.swing.JLabel();
+        lblElectrocardiograma = new javax.swing.JLabel();
+        lblLabClinico = new javax.swing.JLabel();
+        lblTriaje = new javax.swing.JLabel();
+        lblFichaAudiologica = new javax.swing.JLabel();
+        lblAnexo7D = new javax.swing.JLabel();
+        lblPsicologia = new javax.swing.JLabel();
+        lblOdontograma = new javax.swing.JLabel();
+        lblEspirometria = new javax.swing.JLabel();
+        lblHistorialOcupacional = new javax.swing.JLabel();
+        btnVLimpiar = new javax.swing.JButton();
+        jLabel152 = new javax.swing.JLabel();
+        txtPerimetroToraxico = new javax.swing.JTextField();
+        lblPerimetroToraxico = new javax.swing.JLabel();
+        jLabel139 = new javax.swing.JLabel();
+        txtExRxSanguineos = new javax.swing.JTextField();
+        lblExRxSanguineos = new javax.swing.JLabel();
+        jLabel153 = new javax.swing.JLabel();
+        txtOftalmologia = new javax.swing.JTextField();
+        lblOftalmologia = new javax.swing.JLabel();
+
+        setClosable(true);
+        setTitle("Buscar Clientes ");
+
+        jLabel1.setText("Desde :");
+
+        FechaDesde.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                FechaDesdePropertyChange(evt);
+            }
+        });
+
+        jLabel2.setText("Hasta :");
+
+        jLabel3.setText("Nombre :");
+
+        txtNombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNombreActionPerformed(evt);
+            }
+        });
+        txtNombre.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtNombreFocusGained(evt);
+            }
+        });
+        txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtNombreKeyReleased(evt);
+            }
+        });
+
+        tbClientes.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tbClientes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tbClientesMousePressed(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tbClientes);
+
+        jTabbedPane1.addTab("Pacientes", jScrollPane1);
+
+        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
+
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder()));
+        jPanel5.setPreferredSize(new java.awt.Dimension(9, 303));
+
+        jLabel124.setText("Triaje :");
+
+        txtTriaje.setEditable(false);
+        txtTriaje.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtTriaje.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel126.setText("Lab. Clinico :");
+
+        txtLabClinico.setEditable(false);
+        txtLabClinico.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtLabClinico.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel128.setText("Electrocardiograma :");
+
+        txtElectrocardiograma.setEditable(false);
+        txtElectrocardiograma.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtElectrocardiograma.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel130.setText("Rx. Torax P.A:");
+
+        txtRadiografiaTorax.setEditable(false);
+        txtRadiografiaTorax.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtRadiografiaTorax.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel132.setText("Ficha Audiologica :");
+
+        txtFichaAudiologica.setEditable(false);
+        txtFichaAudiologica.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtFichaAudiologica.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel134.setText("Espirometria :");
+
+        txtEspirometria.setEditable(false);
+        txtEspirometria.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtEspirometria.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel137.setText("Odontograma :");
+
+        txtOdontograma.setEditable(false);
+        txtOdontograma.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtOdontograma.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        txtPsicologia.setEditable(false);
+        txtPsicologia.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtPsicologia.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel138.setText("Psicologia :");
+
+        txtAnexo7D.setEditable(false);
+        txtAnexo7D.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtAnexo7D.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel141.setText("Anexo 7D :");
+
+        txtHistoriaOcupacional.setEditable(false);
+        txtHistoriaOcupacional.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtHistoriaOcupacional.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel143.setText("Hist. Ocupacional : ");
+
+        jLabel144.setText("Cert. Trabajo Altura :");
+
+        txtCerTrabajo.setEditable(false);
+        txtCerTrabajo.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtCerTrabajo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        txtCuestionarioNordico.setEditable(false);
+        txtCuestionarioNordico.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtCuestionarioNordico.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel145.setText("Cuestionario Nórdico :");
+
+        jLabel146.setText("Detención S.A.S :");
+
+        txtDetencionSAS.setEditable(false);
+        txtDetencionSAS.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtDetencionSAS.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        txtConsentimientoDosaje.setEditable(false);
+        txtConsentimientoDosaje.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtConsentimientoDosaje.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel150.setText("Consentimiento Dosaje :");
+
+        jLabel151.setText("Ficha Ant. Patológicos :");
+
+        txtAntPatologicos.setEditable(false);
+        txtAntPatologicos.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtAntPatologicos.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel154.setText("Nro Orden :");
+
+        txtEOrden.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtEOrdenActionPerformed(evt);
+            }
+        });
+        txtEOrden.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtEOrdenKeyTyped(evt);
+            }
+        });
+
+        jLabel155.setText("Nombres :");
+
+        txtENombre.setEditable(false);
+
+        jLabel156.setText("Tipo Examén :");
+
+        txtEtipoExamen.setEditable(false);
+
+        lblConsentimientoDosaje.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        lblSAS.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        lblCertificacionAltura.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        lblCuestionarioNordico.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        lblFichaAPatologicos.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        lblRadiografiaTorax.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        lblElectrocardiograma.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        lblLabClinico.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        lblTriaje.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        lblFichaAudiologica.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        lblAnexo7D.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        lblPsicologia.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        lblOdontograma.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        lblEspirometria.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        lblHistorialOcupacional.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        btnVLimpiar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/limpiar.png"))); // NOI18N
+        btnVLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVLimpiarActionPerformed(evt);
+            }
+        });
+
+        jLabel152.setText("Perimetro Toraxico :");
+
+        txtPerimetroToraxico.setEditable(false);
+        txtPerimetroToraxico.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtPerimetroToraxico.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        lblPerimetroToraxico.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        jLabel139.setText("Ex. Rx Sanguineos :");
+
+        txtExRxSanguineos.setEditable(false);
+        txtExRxSanguineos.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtExRxSanguineos.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        lblExRxSanguineos.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        jLabel153.setText("Oftalmología :");
+
+        txtOftalmologia.setEditable(false);
+        txtOftalmologia.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txtOftalmologia.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        lblOftalmologia.setPreferredSize(new java.awt.Dimension(13, 11));
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel124, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel126, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel128, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel130, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel132, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel134, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel137, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel138, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel139, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addComponent(txtFichaAudiologica, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lblFichaAudiologica, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addComponent(txtTriaje, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lblTriaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addComponent(txtLabClinico, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lblLabClinico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addComponent(txtElectrocardiograma, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lblElectrocardiograma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addComponent(txtRadiografiaTorax, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lblRadiografiaTorax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addComponent(txtEspirometria, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lblEspirometria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addComponent(txtOdontograma, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lblOdontograma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addComponent(txtPsicologia, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lblPsicologia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addGap(35, 35, 35)
+                                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel143, javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jLabel141, javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jLabel151, javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jLabel145, javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jLabel144, javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jLabel146, javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jLabel150, javax.swing.GroupLayout.Alignment.TRAILING)))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel152))))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(txtExRxSanguineos, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblExRxSanguineos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel153)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(txtAnexo7D, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblAnexo7D, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(txtHistoriaOcupacional, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblHistorialOcupacional, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(txtAntPatologicos, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblFichaAPatologicos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(txtCuestionarioNordico, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblCuestionarioNordico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(txtCerTrabajo, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblCertificacionAltura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(txtDetencionSAS, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblSAS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(txtConsentimientoDosaje, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblConsentimientoDosaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(txtPerimetroToraxico, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblPerimetroToraxico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(txtOftalmologia, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblOftalmologia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(jPanel5Layout.createSequentialGroup()
+                            .addGap(10, 10, 10)
+                            .addComponent(jLabel155)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txtENombre))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel5Layout.createSequentialGroup()
+                            .addComponent(jLabel154)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txtEOrden, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(12, 12, 12)
+                            .addComponent(btnVLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(jLabel156)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(txtEtipoExamen, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addComponent(jSeparator18, javax.swing.GroupLayout.PREFERRED_SIZE, 528, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(btnVLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel154)
+                    .addComponent(txtEOrden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel156)
+                    .addComponent(txtEtipoExamen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtENombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel155))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator18, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(txtTriaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel124)
+                            .addComponent(lblTriaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(txtLabClinico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel126)
+                            .addComponent(lblLabClinico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(txtElectrocardiograma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel128)
+                            .addComponent(lblElectrocardiograma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(txtRadiografiaTorax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel130)
+                            .addComponent(lblRadiografiaTorax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(txtFichaAudiologica, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel132)
+                            .addComponent(lblFichaAudiologica, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(txtEspirometria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblEspirometria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel134))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(txtOdontograma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblOdontograma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel137))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(txtPsicologia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblPsicologia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel138)))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(104, 104, 104)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(jLabel144)
+                            .addComponent(txtCerTrabajo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblCertificacionAltura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(jLabel146)
+                            .addComponent(txtDetencionSAS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblSAS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(jLabel150)
+                            .addComponent(txtConsentimientoDosaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblConsentimientoDosaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(jLabel152)
+                            .addComponent(txtPerimetroToraxico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblPerimetroToraxico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(52, 52, 52)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(txtAntPatologicos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblFichaAPatologicos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(txtCuestionarioNordico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblCuestionarioNordico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel145)))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(jLabel141)
+                            .addComponent(txtAnexo7D, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblAnexo7D, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(jLabel143)
+                            .addComponent(txtHistoriaOcupacional, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblHistorialOcupacional, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel151)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lblExRxSanguineos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtExRxSanguineos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel139)
+                    .addComponent(jLabel153)
+                    .addComponent(txtOftalmologia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblOftalmologia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
+        jTabbedPane2.addTab("Estado de Paciente :", jPanel5);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(FechaDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(FechaHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtNombre))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTabbedPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jSeparator1)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jTabbedPane2)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(FechaDesde, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1)
+                            .addComponent(FechaHasta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
+       
+    }//GEN-LAST:event_txtNombreActionPerformed
+
+    private void txtNombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyReleased
+        sbCargarUsuarios(txtNombre.getText().toString());
+    }//GEN-LAST:event_txtNombreKeyReleased
+
+    private void FechaDesdePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_FechaDesdePropertyChange
+    txtNombre.requestFocus();   
+    }//GEN-LAST:event_FechaDesdePropertyChange
+
+    private void txtEOrdenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEOrdenActionPerformed
+        verifica(txtEOrden.getText().toString());
+    }//GEN-LAST:event_txtEOrdenActionPerformed
+public void verifica(String orden){
+        if (!orden.isEmpty()) {
+            if (OrdenExiste(orden)) {
+                String Sql = "SELECT d.nombres_pa||' '||d.apellidos_pa AS nombres,n.nom_examen FROM "
+                        + "datos_paciente AS d INNER JOIN n_orden_ocupacional AS n ON(d.cod_pa = n.cod_pa)WHERE n.n_orden ='" + orden + "'";
+                oConn.FnBoolQueryExecute(Sql);
+                try {
+                    if (oConn.setResult.next()) {
+                        txtEOrden.setText(orden);
+                        txtENombre.setText(oConn.setResult.getString("nombres"));
+                        txtEtipoExamen.setText(oConn.setResult.getString("nom_examen"));
+                        txtEOrden.setEditable(false);
+                        txtENombre.setEditable(false);
+                        txtEtipoExamen.setEditable(false);
+                        oConn.setResult.close();
+                    }
+                    oConn.setResult.close();
+                } catch (Exception e) {
+                }
+                vExamenes(orden);
+
+            } else {
+                oFunc.SubSistemaMensajeError("No existe Nro Orden");
+                Limpiar2();
+            }
+        }
+}
+public boolean OrdenExiste(String orden)
+    {
+        boolean bResultado=false;
+
+        String sQuery;
+
+        sQuery  = "Select n_orden from n_orden_ocupacional Where n_orden="+orden;
+        
+        //Ejecuta el Query
+        oConn.FnBoolQueryExecute(sQuery);
+        
+        // Capturo el Error
+        try {
+            
+            // Verifico que haya habido resultados
+            if (oConn.setResult.next())
+            {
+                // Resultado
+                bResultado = true;
+             
+             
+            }
+            
+            // Cierro los Resultados
+            oConn.setResult.close();
+            
+        } catch (SQLException ex) {
+         
+        }
+
+        return bResultado;
+        
+    }
+    private void btnVLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVLimpiarActionPerformed
+        Limpiar2();
+    }//GEN-LAST:event_btnVLimpiarActionPerformed
+
+    private void tbClientesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbClientesMousePressed
+         if (evt.getClickCount() == 2) 
+        {  
+            Integer cod  = Integer.valueOf( tbClientes.getValueAt(tbClientes.getSelectedRow(),0).toString());
+            verifica(String.valueOf(cod));
+            
+        }
+    }//GEN-LAST:event_tbClientesMousePressed
+
+    private void txtEOrdenKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEOrdenKeyTyped
+        oFunc.NoLetras(evt);
+    }//GEN-LAST:event_txtEOrdenKeyTyped
+
+    private void txtNombreFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNombreFocusGained
+        sbCargarUsuarios(txtNombre.getText().toString());
+    }//GEN-LAST:event_txtNombreFocusGained
+private void Fecha(){
+Date fechaDate = new Date();
+//SimpleDateFormat formateador = new SimpleDateFormat("'HUAMACHUCO - ' EEEEE dd MMMMM yyyy");
+FechaDesde.setDate(fechaDate);
+FechaHasta.setDate(fechaDate);
+} 
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.toedter.calendar.JDateChooser FechaDesde;
+    private com.toedter.calendar.JDateChooser FechaHasta;
+    private javax.swing.JButton btnVLimpiar;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel124;
+    private javax.swing.JLabel jLabel126;
+    private javax.swing.JLabel jLabel128;
+    private javax.swing.JLabel jLabel130;
+    private javax.swing.JLabel jLabel132;
+    private javax.swing.JLabel jLabel134;
+    private javax.swing.JLabel jLabel137;
+    private javax.swing.JLabel jLabel138;
+    private javax.swing.JLabel jLabel139;
+    private javax.swing.JLabel jLabel141;
+    private javax.swing.JLabel jLabel143;
+    private javax.swing.JLabel jLabel144;
+    private javax.swing.JLabel jLabel145;
+    private javax.swing.JLabel jLabel146;
+    private javax.swing.JLabel jLabel150;
+    private javax.swing.JLabel jLabel151;
+    private javax.swing.JLabel jLabel152;
+    private javax.swing.JLabel jLabel153;
+    private javax.swing.JLabel jLabel154;
+    private javax.swing.JLabel jLabel155;
+    private javax.swing.JLabel jLabel156;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator18;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JLabel lblAnexo7D;
+    private javax.swing.JLabel lblCertificacionAltura;
+    private javax.swing.JLabel lblConsentimientoDosaje;
+    private javax.swing.JLabel lblCuestionarioNordico;
+    private javax.swing.JLabel lblElectrocardiograma;
+    private javax.swing.JLabel lblEspirometria;
+    private javax.swing.JLabel lblExRxSanguineos;
+    private javax.swing.JLabel lblFichaAPatologicos;
+    private javax.swing.JLabel lblFichaAudiologica;
+    private javax.swing.JLabel lblHistorialOcupacional;
+    private javax.swing.JLabel lblLabClinico;
+    private javax.swing.JLabel lblOdontograma;
+    private javax.swing.JLabel lblOftalmologia;
+    private javax.swing.JLabel lblPerimetroToraxico;
+    private javax.swing.JLabel lblPsicologia;
+    private javax.swing.JLabel lblRadiografiaTorax;
+    private javax.swing.JLabel lblSAS;
+    private javax.swing.JLabel lblTriaje;
+    private javax.swing.JTable tbClientes;
+    private javax.swing.JTextField txtAnexo7D;
+    private javax.swing.JTextField txtAntPatologicos;
+    private javax.swing.JTextField txtCerTrabajo;
+    private javax.swing.JTextField txtConsentimientoDosaje;
+    private javax.swing.JTextField txtCuestionarioNordico;
+    private javax.swing.JTextField txtDetencionSAS;
+    private javax.swing.JTextField txtENombre;
+    private javax.swing.JTextField txtEOrden;
+    private javax.swing.JTextField txtElectrocardiograma;
+    private javax.swing.JTextField txtEspirometria;
+    private javax.swing.JTextField txtEtipoExamen;
+    private javax.swing.JTextField txtExRxSanguineos;
+    private javax.swing.JTextField txtFichaAudiologica;
+    private javax.swing.JTextField txtHistoriaOcupacional;
+    private javax.swing.JTextField txtLabClinico;
+    private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextField txtOdontograma;
+    private javax.swing.JTextField txtOftalmologia;
+    private javax.swing.JTextField txtPerimetroToraxico;
+    private javax.swing.JTextField txtPsicologia;
+    private javax.swing.JTextField txtRadiografiaTorax;
+    private javax.swing.JTextField txtTriaje;
+    // End of variables declaration//GEN-END:variables
+}
